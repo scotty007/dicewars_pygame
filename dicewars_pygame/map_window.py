@@ -37,9 +37,6 @@ class MapWindow:
     def surface(self):
         return self._surface
 
-    def mouse_down(self, x, y):
-        print(f'MAP: mouse down at ({x}, {y})')
-
     def render(self):
         if not self._dirty:
             return False
@@ -60,3 +57,6 @@ class MapWindow:
     def init_game(self, game, player_colors):
         for area_idx, seat_idx in enumerate(game.area_seats):
             self._map_areas[area_idx].draw(self._surface, player_colors[seat_idx])
+
+    def get_map_pos(self, x, y):
+        return (x - self._map_pos[0]) / self._map_scale, (y - self._map_pos[1]) / self._map_scale

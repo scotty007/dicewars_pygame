@@ -22,6 +22,7 @@ import pygame
 
 from dicewars.grid import Grid
 from dicewars.game import Game
+from dicewars.util import pick_grid_area
 
 from . map_window import MapWindow
 from . ctrl_window import CtrlWindow
@@ -52,7 +53,9 @@ class Engine:
 
     def mouse_down(self, x, y):
         if self._map_rect.collidepoint(x, y):
-            self._map_window.mouse_down(x - self._map_rect.x, y - self._map_rect.y)
+            map_pos = self._map_window.get_map_pos(x - self._map_rect.x, y - self._map_rect.y)
+            grid_area = pick_grid_area(self._grid, *map_pos)
+            print(grid_area.idx if grid_area else 'none')
         elif self._ctrl_rect.collidepoint(x, y):
             self._ctrl_window.mouse_down(x - self._ctrl_rect.x, y - self._ctrl_rect.y)
 
