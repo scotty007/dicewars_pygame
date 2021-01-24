@@ -21,15 +21,22 @@
 import pygame
 
 from dicewars.grid import Grid
+from dicewars.game import Game
 
 from . map_window import MapWindow
 from . ctrl_window import CtrlWindow
 
 
 class Engine:
+    _BG_COLOR = pygame.Color('white')
+    _PLAYER_COLORS = [
+        pygame.Color(color)
+        for color in ('#B37FFE', '#B3FF01', '#009302', '#FF7FFE', '#FF7F01', '#B3FFFE', '#FFFF01', '#FF5858')
+    ]
+
     def __init__(self, surface):
         self._surface = surface
-        self._surface.fill('white')
+        self._surface.fill(self._BG_COLOR)
 
         pad = 10
         w_surf, h_surf = self._surface.get_size()
@@ -40,6 +47,7 @@ class Engine:
         self._ctrl_window = CtrlWindow(self._ctrl_rect.size)
 
         self._grid = None
+        self._game = None
         self._init_grid()
 
     def mouse_down(self, x, y):
@@ -68,4 +76,9 @@ class Engine:
 
     def _init_grid(self):
         self._grid = Grid()
-        self._map_window.init_grid(self._grid)
+        self._map_window.init_grid(self._grid, self._BG_COLOR)
+        self._init_game()
+
+    def _init_game(self):
+        self._game = Game(self._grid)
+        self._map_window.init_game(self._game, self._PLAYER_COLORS)
