@@ -20,13 +20,18 @@
 
 import pygame
 
+from . map_area import MapArea
+
 
 class MapWindow:
     def __init__(self, size):
         self._surface = pygame.Surface(size)
 
-        self._surface.fill((255, 255, 255))
-        self._dirty = True
+        self._map_pos = None
+        self._map_scale = None
+        self._map_areas = None
+
+        self._dirty = False
 
     @property
     def surface(self):
@@ -41,3 +46,16 @@ class MapWindow:
 
         self._dirty = False
         return True
+
+    def init_grid(self, grid):
+        self._surface.fill('white')
+
+        map_rect = pygame.Rect((0, 0), grid.map_size).fit(self._surface.get_rect())
+        self._map_pos = (map_rect.x, map_rect.y)
+        self._map_scale = min(map_rect.width / grid.map_size[0], map_rect.height / grid.map_size[1])
+        self._map_areas = [
+            MapArea(grid_area, self._surface, *self._map_pos, self._map_scale)
+            for grid_area in grid.areas
+        ]
+
+        self._dirty = True

@@ -20,6 +20,8 @@
 
 import pygame
 
+from dicewars.grid import Grid
+
 from . map_window import MapWindow
 from . ctrl_window import CtrlWindow
 
@@ -27,6 +29,7 @@ from . ctrl_window import CtrlWindow
 class Engine:
     def __init__(self, surface):
         self._surface = surface
+        self._surface.fill('white')
 
         pad = 10
         w_surf, h_surf = self._surface.get_size()
@@ -35,6 +38,9 @@ class Engine:
         self._map_window = MapWindow(self._map_rect.size)
         self._ctrl_rect = pygame.Rect(pad, self._map_rect.bottom + pad, w_win, h_ctrl)
         self._ctrl_window = CtrlWindow(self._ctrl_rect.size)
+
+        self._grid = None
+        self._init_grid()
 
     def mouse_down(self, x, y):
         if self._map_rect.collidepoint(x, y):
@@ -59,3 +65,7 @@ class Engine:
             self._surface.blit(self._ctrl_window.surface, self._ctrl_rect)
             dirty = True
         return dirty
+
+    def _init_grid(self):
+        self._grid = Grid()
+        self._map_window.init_grid(self._grid)

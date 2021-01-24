@@ -20,15 +20,18 @@
 
 import pygame
 
+from dicewars.__version__ import __version__ as dicewars_version
+
 from . __version__ import __version__
 from . engine import Engine
 
 
 def main():
+    print(f'dicewars_pygame {__version__} (dicewars {dicewars_version})')
     pygame.init()
     pygame.display.set_caption(f'DiceWars (pygame) v{__version__}')
 
-    screen = pygame.display.set_mode((600, 600))
+    screen = pygame.display.set_mode((800, 800))
     clock = pygame.time.Clock()
     engine = Engine(screen)
 
