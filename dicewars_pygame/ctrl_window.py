@@ -18,5 +18,32 @@
 # You should have received a copy of the GNU General Public License
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION = (0, 1, 0, 'dev1')
-__version__ = '.'.join(str(v) for v in VERSION)
+import pygame
+
+
+class CtrlWindow:
+    def __init__(self, size):
+        self._surface = pygame.Surface(size)
+
+        self._surface.fill((255, 255, 255))
+        self._dirty = True
+
+    @property
+    def surface(self):
+        return self._surface
+
+    def mouse_down(self, x, y):
+        print(f'CTRL: mouse down at ({x}, {y})')
+
+    def mouse_up(self, x, y):
+        print(f'CTRL: mouse up   at ({x}, {y})')
+
+    def mouse_move(self, x, y):
+        print(f'CTRL: mouse move to ({x}, {y})')
+
+    def render(self):
+        if not self._dirty:
+            return False
+
+        self._dirty = False
+        return True
