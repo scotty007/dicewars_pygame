@@ -33,25 +33,19 @@ class MapWindow:
 
         self._dirty = False
 
-    @property
-    def surface(self):
-        return self._surface
-
-    def render(self):
-        if not self._dirty:
-            return False
-
-        self._dirty = False
-        return True
+    def render(self, surface, rect):
+        if self._dirty:
+            surface.blit(self._surface, rect)
+            self._dirty = False
+            return True
+        return False
 
     def init_grid(self, grid, bg_color):
         self._surface.fill(bg_color)
-
         map_rect = pygame.Rect((0, 0), grid.map_size).fit(self._surface.get_rect())
         self._map_pos = (map_rect.x, map_rect.y)
         self._map_scale = min(map_rect.width / grid.map_size[0], map_rect.height / grid.map_size[1])
         self._map_areas = [MapArea(grid_area, *self._map_pos, self._map_scale) for grid_area in grid.areas]
-
         self._dirty = True
 
     def init_game(self, game, player_colors):

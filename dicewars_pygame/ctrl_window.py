@@ -28,10 +28,6 @@ class CtrlWindow:
         self._surface.fill((255, 255, 255))
         self._dirty = True
 
-    @property
-    def surface(self):
-        return self._surface
-
     def mouse_down(self, x, y):
         print(f'CTRL: mouse down at ({x}, {y})')
 
@@ -41,9 +37,9 @@ class CtrlWindow:
     def mouse_move(self, x, y):
         print(f'CTRL: mouse move to ({x}, {y})')
 
-    def render(self):
-        if not self._dirty:
-            return False
-
-        self._dirty = False
-        return True
+    def render(self, surface, rect):
+        if self._dirty:
+            surface.blit(self._surface, rect)
+            self._dirty = False
+            return True
+        return False

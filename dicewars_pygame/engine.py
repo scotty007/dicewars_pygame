@@ -68,13 +68,8 @@ class Engine:
             self._ctrl_window.mouse_move(x - self._ctrl_rect.x, y - self._ctrl_rect.y)
 
     def render(self):
-        dirty = False
-        if self._map_window.render():
-            self._surface.blit(self._map_window.surface, self._map_rect)
-            dirty = True
-        if self._ctrl_window.render():
-            self._surface.blit(self._ctrl_window.surface, self._ctrl_rect)
-            dirty = True
+        dirty = self._map_window.render(self._surface, self._map_rect)
+        dirty |= self._ctrl_window.render(self._surface, self._ctrl_rect)
         return dirty
 
     def _init_grid(self):
