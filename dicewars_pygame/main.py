@@ -23,6 +23,7 @@ import pygame
 from dicewars.__version__ import __version__ as dicewars_version
 
 from . __version__ import __version__
+from . config import APP_SIZE
 from . engine import Engine
 
 
@@ -31,7 +32,7 @@ def main():
     pygame.init()
     pygame.display.set_caption(f'DiceWars (pygame) v{__version__}')
 
-    screen = pygame.display.set_mode((800, 800))
+    screen = pygame.display.set_mode(APP_SIZE)
     clock = pygame.time.Clock()
     engine = Engine(screen)
 

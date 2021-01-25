@@ -30,10 +30,6 @@ from . ctrl_window import CtrlWindow
 
 class Engine:
     _BG_COLOR = pygame.Color('white')
-    _PLAYER_COLORS = [
-        pygame.Color(color)
-        for color in ('#B37FFE', '#B3FF01', '#009302', '#FF7FFE', '#FF7F01', '#B3FFFE', '#FFFF01', '#FF5858')
-    ]
 
     def __init__(self, surface):
         self._surface = surface
@@ -79,4 +75,4 @@ class Engine:
 
     def _init_game(self):
         self._game = Game(self._grid)
-        self._map_window.init_game(self._game, self._PLAYER_COLORS)
+        self._map_window.init_game(self._game)
