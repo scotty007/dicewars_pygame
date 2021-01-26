@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
+from pathlib import Path
 from pygame import Color
 
 
@@ -27,3 +28,6 @@ PLAYER_COLORS = [
     Color(color)
     for color in ('#B37FFE', '#B3FF01', '#009302', '#FF7FFE', '#FF7F01', '#B3FFFE', '#FFFF01', '#FF5858')
 ]
+
+RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
+FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'
