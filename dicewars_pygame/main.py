@@ -51,6 +51,8 @@ def main():
                 engine.mouse_down(*event.pos)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 engine.mouse_up(*event.pos)
+            elif pygame.USEREVENT <= event.type:
+                engine.user_event(event)
 
         if engine.render():
             pygame.display.flip()

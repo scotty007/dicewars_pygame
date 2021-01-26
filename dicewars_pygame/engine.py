@@ -22,8 +22,10 @@ import pygame
 
 from dicewars.grid import Grid
 from dicewars.game import Game
+from dicewars.match import Match
 from dicewars.util import pick_grid_area
 
+from . import events
 from . map_window import MapWindow
 from . ctrl_window import CtrlWindow
 
@@ -39,12 +41,13 @@ class Engine:
         w_surf, h_surf = self._surface.get_size()
         w_win, h_ctrl = w_surf - pad * 2, 100
         self._map_rect = pygame.Rect(pad, pad, w_win, h_surf - h_ctrl - pad * 3)
-        self._map_window = MapWindow(self._map_rect.size)
+        self._map_window = MapWindow(self._map_rect.size, self._BG_COLOR)
         self._ctrl_rect = pygame.Rect(pad, self._map_rect.bottom + pad, w_win, h_ctrl)
-        self._ctrl_window = CtrlWindow(self._ctrl_rect.size)
+        self._ctrl_window = CtrlWindow(self._ctrl_rect.size, self._BG_COLOR)
 
         self._grid = None
         self._game = None
+        self._match = None
         self._init_grid()
 
     def mouse_down(self, x, y):
@@ -60,19 +63,35 @@ class Engine:
             self._ctrl_window.mouse_up(x - self._ctrl_rect.x, y - self._ctrl_rect.y)
 
     def mouse_move(self, x, y):
-        if self._ctrl_rect.collidepoint(x, y):
-            self._ctrl_window.mouse_move(x - self._ctrl_rect.x, y - self._ctrl_rect.y)
+        self._ctrl_window.mouse_move(x - self._ctrl_rect.x, y - self._ctrl_rect.y)
+
+    def user_event(self, event):
+        if event.type == events.BUTTON_NUM_SEATS:
+            self._ctrl_window.num_seats = event.num_seats
+            self._init_game()
+        elif event.type == events.BUTTON_SHUFFLE:
+            self._init_grid()
+        elif event.type == events.BUTTON_START:
+            self._init_match()
+        else:
+            print('unhandled user event:', event)
 
     def render(self):
-        dirty = self._map_window.render(self._surface, self._map_rect)
-        dirty |= self._ctrl_window.render(self._surface, self._ctrl_rect)
+        dirty = self._map_window.blit(self._surface, self._map_rect)
+        dirty |= self._ctrl_window.blit(self._surface, self._ctrl_rect)
         return dirty
 
     def _init_grid(self):
         self._grid = Grid()
-        self._map_window.init_grid(self._grid, self._BG_COLOR)
+        self._map_window.init_grid(self._grid)
         self._init_game()
 
     def _init_game(self):
-        self._game = Game(self._grid)
+        assert self._grid
+        self._game = Game(self._grid, num_seats=self._ctrl_window.num_seats)
         self._map_window.init_game(self._game)
+
+    def _init_match(self):
+        assert self._game
+        self._match = Match(self._game)
+        self._ctrl_window.init_match(self._match)

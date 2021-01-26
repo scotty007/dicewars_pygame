@@ -20,6 +20,7 @@
 
 from pathlib import Path
 from pygame import Color
+from dicewars.game import Game
 
 
 APP_SIZE = (800, 800)
@@ -28,6 +29,9 @@ PLAYER_COLORS = [
     Color(color)
     for color in ('#B37FFE', '#B3FF01', '#009302', '#FF7FFE', '#FF7F01', '#B3FFFE', '#FFFF01', '#FF5858')
 ]
+
+MAX_NUM_PLAYERS = len(PLAYER_COLORS)
+DEFAULT_NUM_PLAYERS = Game.DEFAULT_NUM_SEATS
 
 RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
 FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'

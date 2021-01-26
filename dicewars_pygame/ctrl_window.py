@@ -18,28 +18,57 @@
 # You should have received a copy of the GNU General Public License
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
-import pygame
+from . ctrl_start import CtrlStart
+from . ctrl_players import CtrlPlayers
 
 
 class CtrlWindow:
-    def __init__(self, size):
-        self._surface = pygame.Surface(size)
+    def __init__(self, size, bg_color):
+        self._start = CtrlStart(size, bg_color)
+        self._players = CtrlPlayers(size, bg_color)
 
-        self._surface.fill((255, 255, 255))
+        self._view = self._start
         self._dirty = True
 
+    @property
+    def num_seats(self):
+        return self._start.num_seats
+
+    @num_seats.setter
+    def num_seats(self, num_seats):
+        if self._start.num_seats != num_seats:
+            self._start.num_seats = num_seats
+            self._dirty = True
+
     def mouse_down(self, x, y):
-        print(f'CTRL: mouse down at ({x}, {y})')
+        for btn in self._view.buttons:
+            if btn.mouse_down(x, y):
+                self._view.draw_button(btn)
+                self._dirty = True
+                break
 
     def mouse_up(self, x, y):
-        print(f'CTRL: mouse up   at ({x}, {y})')
+        for btn in self._view.buttons:
+            if btn.mouse_up(x, y):
+                self._view.draw_button(btn)
+                self._dirty = True
+                break
 
     def mouse_move(self, x, y):
-        print(f'CTRL: mouse move to ({x}, {y})')
+        for btn in self._view.buttons:
+            if btn.mouse_move(x, y):
+                self._view.draw_button(btn)
+                self._dirty = True
+                break
 
-    def render(self, surface, rect):
+    def blit(self, surface, rect):
         if self._dirty:
-            surface.blit(self._surface, rect)
+            surface.blit(self._view.surface, rect)
             self._dirty = False
             return True
         return False
+
+    def init_match(self, match):
+        self._view = self._players
+        self._players.init_match(match)
+        self._dirty = True

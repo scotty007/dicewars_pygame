@@ -18,5 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION = (0, 1, 0, 'dev5')
-__version__ = '.'.join(str(v) for v in VERSION)
+from pygame.event import custom_type
+
+
+BUTTON_NUM_SEATS = custom_type()  # attributes: num_seats
+BUTTON_SHUFFLE = custom_type()
+BUTTON_START = custom_type()
+
+BUTTON_END_TURN = custom_type()

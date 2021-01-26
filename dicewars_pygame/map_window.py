@@ -25,7 +25,8 @@ from . map_area import MapArea
 
 
 class MapWindow:
-    def __init__(self, size):
+    def __init__(self, size, bg_color):
+        self._bg_color = bg_color
         self._surface = pygame.Surface(size)
 
         self._map_pos = None
@@ -34,15 +35,15 @@ class MapWindow:
 
         self._dirty = False
 
-    def render(self, surface, rect):
+    def blit(self, surface, rect):
         if self._dirty:
             surface.blit(self._surface, rect)
             self._dirty = False
             return True
         return False
 
-    def init_grid(self, grid, bg_color):
-        self._surface.fill(bg_color)
+    def init_grid(self, grid):
+        self._surface.fill(self._bg_color)
         map_rect = pygame.Rect((0, 0), grid.map_size).fit(self._surface.get_rect())
         self._map_pos = (map_rect.x, map_rect.y)
         self._map_scale = min(map_rect.width / grid.map_size[0], map_rect.height / grid.map_size[1])
@@ -52,6 +53,7 @@ class MapWindow:
     def init_game(self, game):
         for area_idx, seat_idx in enumerate(game.area_seats):
             self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[seat_idx])
+        self._dirty = True
 
     def get_map_pos(self, x, y):
         return (x - self._map_pos[0]) / self._map_scale, (y - self._map_pos[1]) / self._map_scale
