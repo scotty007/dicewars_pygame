@@ -58,7 +58,9 @@ class CtrlPlayers:
         btn = self._buttons[0]
         x, w = 0, btn.rect.left / match.game.num_seats - 6
         for seat_idx, player_idx in enumerate(match.game.seat_order):
-            self._player_states[player_idx].init(self._surface, x, w, match.player_max_size[player_idx])
+            self._player_states[player_idx].init(
+                self._surface, x, w, seat_idx == 0, match.player_max_size[player_idx]
+            )
             x += w + 6
         btn.set_on(match.player == 0)
         btn.draw(self._surface)
@@ -70,9 +72,10 @@ class _PlayerState:
         self._size_text = None
         self._stock_text = None
 
-    def init(self, surface, pos_x, width, dwp_max_size):
+    def init(self, surface, pos_x, width, current, dwp_max_size):
         self._box.rect.x = pos_x
         self._box.rect.width = width
+        self._box.bg_color = self._box.bd_color if current else Box.DEFAULT_BG_COLOR
         self._box.draw(surface)
 
         self._size_text = Text(str(dwp_max_size), Text.SIZE_L, self._box.rect.move(0, -Text.SIZE_L * 0.25))
