@@ -20,13 +20,14 @@
 
 from . ctrl_start import CtrlStart
 from . ctrl_players import CtrlPlayers
+from . ctrl_attack import CtrlAttack
 
 
 class CtrlWindow:
     def __init__(self, size, bg_color):
         self._start = CtrlStart(size, bg_color)
         self._players = CtrlPlayers(size, bg_color)
-        self._attack = _CtrlDummy(size, bg_color)
+        self._attack = CtrlAttack(size, bg_color)
         self._supply = _CtrlDummy(size, bg_color)
         self._match = None
 
@@ -83,15 +84,17 @@ class CtrlWindow:
 
     def start_attack(self):
         self._view = self._attack
-        self._attack.show('start attack')
+        self._attack.init(self._match.last_attack.from_player, self._match.last_attack.to_player)
         self._dirty = True
 
     def show_from_attack(self):
-        self._attack.show('show FROM attack')
+        self._attack.show_from(self._match.last_attack.from_dice, self._match.last_attack.from_sum_dice)
         self._dirty = True
 
     def show_to_attack(self):
-        self._attack.show('show TO attack')
+        self._attack.show_to(
+            self._match.last_attack.to_dice, self._match.last_attack.to_sum_dice, self._match.last_attack.victory
+        )
         self._dirty = True
 
     def end_attack(self):

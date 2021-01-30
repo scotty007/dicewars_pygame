@@ -67,6 +67,7 @@ class Text:
 
 
 class Box:
+    BD_WIDTH = 5
     DEFAULT_BG_COLOR = pygame.Color('white')
     DEFAULT_BD_COLOR = pygame.Color('black')
 
@@ -77,7 +78,9 @@ class Box:
 
     def draw(self, surface, bg_color=None, bd_color=None):
         pygame.draw.rect(surface, bg_color if bg_color else self.bg_color, self.rect, border_radius=20)
-        pygame.draw.rect(surface, bd_color if bd_color else self.bd_color, self.rect, width=5, border_radius=20)
+        pygame.draw.rect(
+            surface, bd_color if bd_color else self.bd_color, self.rect, width=self.BD_WIDTH, border_radius=20
+        )
 
 
 class Button:
