@@ -22,11 +22,11 @@ import pygame
 
 
 class MapArea:
-    _BORDER_COLOR = pygame.Color(0, 0, 0)
+    _BD_COLOR = pygame.Color('black')
 
     def __init__(self, grid_area, map_x0, map_y0, map_scale):
         self._points = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_area.border]
 
-    def draw(self, surface, color, border_color=_BORDER_COLOR):
-        pygame.draw.polygon(surface, color, self._points)
-        pygame.draw.lines(surface, border_color, True, self._points, 3)
+    def draw(self, surface, bg_color, bd_color=_BD_COLOR):
+        pygame.draw.polygon(surface, bg_color, self._points)
+        pygame.draw.lines(surface, bd_color, True, self._points, 3)

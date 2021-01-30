@@ -25,6 +25,8 @@ from . map_area import MapArea
 
 
 class MapWindow:
+    _HL_BG_COLOR = pygame.Color('black')
+
     def __init__(self, size, bg_color):
         self._bg_color = bg_color
         self._surface = pygame.Surface(size)
@@ -53,6 +55,14 @@ class MapWindow:
     def init_game(self, game):
         for area_idx, seat_idx in enumerate(game.area_seats):
             self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[seat_idx])
+        self._dirty = True
+
+    def draw_area(self, area_idx, player_idx):
+        self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[player_idx])
+        self._dirty = True
+
+    def highlight_area(self, area_idx, player_idx):
+        self._map_areas[area_idx].draw(self._surface, self._HL_BG_COLOR, bd_color=PLAYER_COLORS[player_idx])
         self._dirty = True
 
     def get_map_pos(self, x, y):

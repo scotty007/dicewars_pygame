@@ -62,6 +62,9 @@ class Text:
         if self._surface2:
             surface.blit(self._surface2, self._pos2)
 
+    def clear(self, surface, bg_color):
+        pygame.draw.rect(surface, bg_color, self._pos1.union(self._pos2) if self._surface2 else self._pos1)
+
 
 class Box:
     DEFAULT_BG_COLOR = pygame.Color('white')

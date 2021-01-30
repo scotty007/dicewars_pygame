@@ -21,8 +21,9 @@
 from pygame.event import custom_type
 
 
-BUTTON_NUM_SEATS = custom_type()  # attributes: num_seats
+BUTTON_NUM_SEATS = custom_type()  # attributes: num_seats (int)
 BUTTON_SHUFFLE = custom_type()
 BUTTON_START = custom_type()
-
 BUTTON_END_TURN = custom_type()
+
+TIMER_NEXT_STEP = custom_type()  # attributes: next_step (callable)
