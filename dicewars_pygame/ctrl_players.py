@@ -22,13 +22,14 @@ import pygame
 
 from . import config
 from . import events
+from . ctrl_view import CtrlView
 from . widgets import Box, Text, EnableButton
 
 
-class CtrlPlayers:
+class CtrlPlayers(CtrlView):
     def __init__(self, size, bg_color):
-        self._bg_color = bg_color
-        self._surface = pygame.Surface(size)
+        super().__init__(size, bg_color)
+
         self._player_idx = -1
 
         w, h = size
@@ -41,18 +42,7 @@ class CtrlPlayers:
         ]
 
         rect = pygame.Rect(w_left, 0, w_right, h)
-        self._buttons = [EnableButton('END\nTURN', rect, pygame.event.Event(events.BUTTON_END_TURN))]
-
-    @property
-    def surface(self):
-        return self._surface
-
-    @property
-    def buttons(self):
-        return self._buttons
-
-    def draw_button(self, button):
-        button.draw(self._surface)
+        self._buttons.append(EnableButton('END\nTURN', rect, pygame.event.Event(events.BUTTON_END_TURN)))
 
     def init_match(self, match):
         self._surface.fill(self._bg_color)

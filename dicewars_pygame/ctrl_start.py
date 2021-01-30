@@ -22,16 +22,16 @@ import pygame
 
 from . import config
 from . import events
+from . ctrl_view import CtrlView
 from . widgets import Button, ToggleButton
 
 
-class CtrlStart:
+class CtrlStart(CtrlView):
     def __init__(self, size, bg_color):
-        self._surface = pygame.Surface(size)
-        self._surface.fill(bg_color)
+        super().__init__(size, bg_color)
+        self._surface.fill(self._bg_color)
 
         self._num_seats = config.DEFAULT_NUM_PLAYERS
-        self._buttons = []
 
         w, h = size
         w_left, w_right = w - h, h
@@ -57,14 +57,6 @@ class CtrlStart:
         btn.draw(self._surface)
 
     @property
-    def surface(self):
-        return self._surface
-
-    @property
-    def buttons(self):
-        return self._buttons
-
-    @property
     def num_seats(self):
         return self._num_seats
 
@@ -80,6 +72,3 @@ class CtrlStart:
             self._buttons[btn_idx].set_on(on)
             self._buttons[btn_idx].draw(self._surface)
         self._num_seats = num_seats
-
-    def draw_button(self, button):
-        button.draw(self._surface)
