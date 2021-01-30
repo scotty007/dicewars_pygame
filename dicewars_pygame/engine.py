@@ -167,8 +167,11 @@ class Engine:
 
         def end_attack():
             la = self._match.last_attack
-            self._map_window.draw_area(la.from_area, self._match.area_players[la.from_area])
-            self._map_window.draw_area(la.to_area, self._match.area_players[la.to_area])
+            self._map_window.draw_area(la.from_area, la.from_player, num_dice=self._match.area_num_dice[la.from_area])
+            if la.victory:
+                self._map_window.draw_area(la.to_area, la.from_player, num_dice=self._match.area_num_dice[la.to_area])
+            else:
+                self._map_window.draw_area(la.to_area, la.to_player)
             self._ctrl_window.end_attack()
 
             if self._match.player == 0:  # user player
@@ -182,6 +185,9 @@ class Engine:
 
     def _supply(self):
         def show_supply():
+            ls = self._match.last_supply
+            for area_idx in ls.areas:
+                self._map_window.draw_area(area_idx, ls.player, self._match.area_num_dice[area_idx])
             self._ctrl_window.show_supply()
             self._start_step_timer(end_supply)
 

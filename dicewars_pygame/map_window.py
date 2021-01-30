@@ -49,16 +49,21 @@ class MapWindow:
         map_rect = pygame.Rect((0, 0), grid.map_size).fit(self._surface.get_rect())
         self._map_pos = (map_rect.x, map_rect.y)
         self._map_scale = min(map_rect.width / grid.map_size[0], map_rect.height / grid.map_size[1])
-        self._map_areas = [MapArea(grid_area, *self._map_pos, self._map_scale) for grid_area in grid.areas]
+        self._map_areas = [
+            MapArea(grid_area, grid.cells[grid_area.center], *self._map_pos, self._map_scale)
+            for grid_area in grid.areas
+        ]
         self._dirty = True
 
     def init_game(self, game):
         for area_idx, seat_idx in enumerate(game.area_seats):
-            self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[seat_idx])
+            self._map_areas[area_idx].draw(
+                self._surface, PLAYER_COLORS[seat_idx], num_dice=game.area_num_dice[area_idx]
+            )
         self._dirty = True
 
-    def draw_area(self, area_idx, player_idx):
-        self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[player_idx])
+    def draw_area(self, area_idx, player_idx, num_dice=None):
+        self._map_areas[area_idx].draw(self._surface, PLAYER_COLORS[player_idx], num_dice=num_dice)
         self._dirty = True
 
     def highlight_area(self, area_idx, player_idx):

@@ -50,20 +50,20 @@ class Text:
         self._surface1 = font.render(lines[0], True, color)
         if len(lines) == 2:
             self._surface2 = font.render(lines[1], True, color)
-            self._pos1 = self._surface1.get_rect(centerx=rect.centerx, bottom=rect.centery)
-            self._pos2 = self._surface2.get_rect(centerx=rect.centerx, top=rect.centery)
+            self._rect1 = self._surface1.get_rect(centerx=rect.centerx, bottom=rect.centery)
+            self._rect2 = self._surface2.get_rect(centerx=rect.centerx, top=rect.centery)
         else:
             assert len(lines) == 1
             self._surface2 = None
-            self._pos1 = self._surface1.get_rect(center=rect.center)
+            self._rect1 = self._surface1.get_rect(center=rect.center)
 
     def draw(self, surface):
-        surface.blit(self._surface1, self._pos1)
+        surface.blit(self._surface1, self._rect1)
         if self._surface2:
-            surface.blit(self._surface2, self._pos2)
+            surface.blit(self._surface2, self._rect2)
 
     def clear(self, surface, bg_color):
-        pygame.draw.rect(surface, bg_color, self._pos1.union(self._pos2) if self._surface2 else self._pos1)
+        pygame.draw.rect(surface, bg_color, self._rect1.union(self._rect2) if self._surface2 else self._rect1)
 
 
 class Box:

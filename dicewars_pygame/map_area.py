@@ -20,13 +20,23 @@
 
 import pygame
 
+from . widgets import Text
+
 
 class MapArea:
     _BD_COLOR = pygame.Color('black')
 
-    def __init__(self, grid_area, map_x0, map_y0, map_scale):
+    def __init__(self, grid_area, grid_center_cell, map_x0, map_y0, map_scale):
         self._points = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_area.border]
+        # TODO: dice gfx
+        bbox = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_center_cell.bbox]
+        self._dice_rect = pygame.Rect(*bbox[0], bbox[1][0] - bbox[0][0], bbox[1][1] - bbox[0][1])
+        self._num_dice = None
 
-    def draw(self, surface, bg_color, bd_color=_BD_COLOR):
+    def draw(self, surface, bg_color, bd_color=_BD_COLOR, num_dice=None):
         pygame.draw.polygon(surface, bg_color, self._points)
         pygame.draw.lines(surface, bd_color, True, self._points, 3)
+        if num_dice is not None:
+            self._num_dice = num_dice
+        assert self._num_dice is not None
+        Text(str(self._num_dice), Text.SIZE_S, self._dice_rect, color=bd_color).draw(surface)
