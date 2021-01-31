@@ -25,5 +25,8 @@ BUTTON_NUM_SEATS = custom_type()  # attributes: num_seats (int)
 BUTTON_SHUFFLE = custom_type()
 BUTTON_START = custom_type()
 BUTTON_END_TURN = custom_type()
+BUTTON_CONTINUE = custom_type()
+BUTTON_RESTART = custom_type()
+BUTTON_REPLAY = custom_type()
 
 TIMER_NEXT_STEP = custom_type()  # attributes: next_step (callable)

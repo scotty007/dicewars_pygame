@@ -84,6 +84,10 @@ class Engine:
             self._init_match()
         elif event.type == events.BUTTON_END_TURN:
             self._end_user_turn()
+        elif event.type == events.BUTTON_CONTINUE:
+            self._continue_match()
+        elif event.type == events.BUTTON_RESTART:
+            self._restart_match()
         elif event.type == events.TIMER_NEXT_STEP:
             event.next_step()
         else:
@@ -104,12 +108,23 @@ class Engine:
         self._match = None
         self._game = Game(self._grid, num_seats=self._ctrl_window.num_seats)
         self._map_window.init_game(self._game)
+        self._ctrl_window.show_start()
 
     def _init_match(self):
         assert self._game
         self._match = Match(self._game)
         self._ctrl_window.init_match(self._match)
         self._start_turn()
+
+    def _continue_match(self):
+        assert self._match and self._match.winner < 0
+        self._ctrl_window.end_attack()
+        self._next_ai_action()
+
+    def _restart_match(self):
+        assert self._game
+        self._map_window.init_game(self._game)
+        self._init_match()
 
     def _start_turn(self):
         assert self._match
@@ -118,6 +133,7 @@ class Engine:
             self._next_ai_action()
         else:  # user player
             assert self._match.player == 0
+            self._timer_running = False
 
     def _set_user_area(self, area_idx):
         assert self._match.player == 0
@@ -172,6 +188,11 @@ class Engine:
                 self._map_window.draw_area(la.to_area, la.from_player, num_dice=self._match.area_num_dice[la.to_area])
             else:
                 self._map_window.draw_area(la.to_area, la.to_player)
+
+            if 0 <= self._match.winner or (la.to_player == 0 and self._match.player_num_areas[0] == 0):
+                # match finished or user player just eliminated
+                self._ctrl_window.show_end()
+                return
             self._ctrl_window.end_attack()
 
             if self._match.player == 0:  # user player
@@ -193,7 +214,6 @@ class Engine:
 
         def end_supply():
             self._ctrl_window.end_supply()
-            self._timer_running = False
             self._start_turn()
 
         assert self._match.end_turn()

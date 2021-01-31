@@ -21,6 +21,7 @@
 from . ctrl_start import CtrlStart
 from . ctrl_players import CtrlPlayers
 from . ctrl_attack import CtrlAttack
+from . ctrl_end import CtrlEnd
 
 
 class CtrlWindow:
@@ -29,6 +30,7 @@ class CtrlWindow:
         self._players = CtrlPlayers(size, bg_color)
         self._attack = CtrlAttack(size, bg_color)
         self._supply = _CtrlDummy(size, bg_color)
+        self._end = CtrlEnd(size, bg_color)
         self._match = None
 
         self._view = self._start
@@ -71,6 +73,12 @@ class CtrlWindow:
             self._dirty = False
             return True
         return False
+
+    def show_start(self):
+        if self._view is not self._start:
+            self._view = self._start
+            self._dirty = True
+        self._match = None
 
     def init_match(self, match):
         self._match = match
@@ -119,6 +127,11 @@ class CtrlWindow:
         self._view = self._players
         player_idx = self._match.last_supply.player
         self._players.update(player_idx, num_stock=self._match.player_num_stock[player_idx])
+        self._dirty = True
+
+    def show_end(self):
+        self._view = self._end
+        self._end.show(self._match.winner)
         self._dirty = True
 
 
