@@ -76,6 +76,7 @@ class CtrlPlayers(CtrlView):
 class _PlayerState:
     _SIZE_DY = -Text.SIZE_L * 0.25
     _STOCK_DY = Text.SIZE_S * 1.25
+    _STOCK_0_COLOR = pygame.Color('gray')
 
     def __init__(self, color, rect):
         self._box = Box(rect, bd_color=color)
@@ -86,7 +87,7 @@ class _PlayerState:
         self._box.rect.x = pos_x
         self._box.rect.width = width
         self._size_text = Text(str(max_size), Text.SIZE_L, self._box.rect.move(0, self._SIZE_DY))
-        self._stock_text = None
+        self._stock_text = Text('0', Text.SIZE_S, self._box.rect.move(0, self._STOCK_DY), color=self._STOCK_0_COLOR)
         self.set_current(surface, current)
 
     def set_current(self, surface, current):
@@ -94,14 +95,12 @@ class _PlayerState:
         self._box.bg_color = self._box.bd_color if current else Box.DEFAULT_BG_COLOR
         self._box.draw(surface)
         self._size_text.draw(surface)
-        if self._stock_text:
-            self._stock_text.draw(surface)
+        self._stock_text.draw(surface)
 
     def update(self, surface, max_size=None, num_stock=None):
         assert self._size_text  # not dead
         self._size_text.clear(surface, self._box.bg_color)
-        if self._stock_text:
-            self._stock_text.clear(surface, self._box.bg_color)
+        self._stock_text.clear(surface, self._box.bg_color)
 
         if max_size is not None:
             if max_size == 0:  # dead
@@ -110,11 +109,10 @@ class _PlayerState:
                 return
             self._size_text = Text(str(max_size), Text.SIZE_L, self._box.rect.move(0, self._SIZE_DY))
         if num_stock is not None:
-            if num_stock == 0:
-                self._stock_text = None
-            else:
-                self._stock_text = Text(str(num_stock), Text.SIZE_S, self._box.rect.move(0, self._STOCK_DY))
+            self._stock_text = Text(
+                str(num_stock), Text.SIZE_S, self._box.rect.move(0, self._STOCK_DY),
+                color=self._STOCK_0_COLOR if num_stock == 0 else Text.DEFAULT_COLOR
+            )
 
         self._size_text.draw(surface)
-        if self._stock_text:
-            self._stock_text.draw(surface)
+        self._stock_text.draw(surface)
