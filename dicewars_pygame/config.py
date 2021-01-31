@@ -34,6 +34,7 @@ MAX_NUM_PLAYERS = len(PLAYER_COLORS)
 DEFAULT_NUM_PLAYERS = Game.DEFAULT_NUM_SEATS
 
 STEP_INTERVAL = 500  # [ms]
+SUPPLY_INTERVAL = STEP_INTERVAL // 10  # [ms]
 
 RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
 FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'

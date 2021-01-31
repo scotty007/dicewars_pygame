@@ -158,11 +158,11 @@ class Engine:
     def _next_ai_action(self):
         def show_from_area():
             self._map_window.highlight_area(self._match.from_area, self._match.player)
-            self._start_step_timer(show_to_area)
+            self._start_timer(show_to_area)
 
         def show_to_area():
             self._map_window.highlight_area(self._match.to_area, self._match.area_players[self._match.to_area])
-            self._start_step_timer(self._attack)
+            self._start_timer(self._attack)
 
         attack_areas = self._ai_player.get_attack_areas(self._grid, self._match.state)
         if attack_areas:
@@ -175,11 +175,11 @@ class Engine:
     def _attack(self):
         def show_from():
             self._ctrl_window.show_from_attack()
-            self._start_step_timer(show_to)
+            self._start_timer(show_to)
 
         def show_to():
             self._ctrl_window.show_to_attack()
-            self._start_step_timer(end_attack)
+            self._start_timer(end_attack)
 
         def end_attack():
             la = self._match.last_attack
@@ -198,31 +198,26 @@ class Engine:
             if self._match.player == 0:  # user player
                 self._timer_running = False
             else:  # AI player
-                self._start_step_timer(self._next_ai_action)
+                self._start_timer(self._next_ai_action)
 
         assert self._match.attack()
         self._ctrl_window.start_attack()
-        self._start_step_timer(show_from)
+        self._start_timer(show_from)
 
     def _supply(self):
-        def show_supply():
-            ls = self._match.last_supply
-            for area_idx in ls.areas:
-                self._map_window.draw_area(area_idx, ls.player, self._match.area_num_dice[area_idx])
-            self._ctrl_window.show_supply()
-            self._start_step_timer(end_supply)
-
-        def end_supply():
-            self._ctrl_window.end_supply()
-            self._start_turn()
+        def next_supply():
+            area_dice = self._ctrl_window.next_supply()
+            if area_dice:
+                self._map_window.draw_area(area_dice[0], self._match.last_supply.player, area_dice[1])
+                self._start_timer(next_supply, config.SUPPLY_INTERVAL)
+            else:
+                self._ctrl_window.end_supply()
+                self._start_turn()
 
         assert self._match.end_turn()
         self._ctrl_window.start_supply()
-        self._start_step_timer(show_supply)
+        self._start_timer(next_supply)
 
-    def _start_step_timer(self, callback):
-        pygame.time.set_timer(
-            pygame.event.Event(events.TIMER_NEXT_STEP, next_step=callback),
-            config.STEP_INTERVAL, loops=1
-        )
+    def _start_timer(self, callback, timeout=config.STEP_INTERVAL):
+        pygame.time.set_timer(pygame.event.Event(events.TIMER_NEXT_STEP, next_step=callback), timeout, loops=1)
         self._timer_running = True

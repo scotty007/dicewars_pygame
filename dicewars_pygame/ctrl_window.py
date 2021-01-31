@@ -21,6 +21,7 @@
 from . ctrl_start import CtrlStart
 from . ctrl_players import CtrlPlayers
 from . ctrl_attack import CtrlAttack
+from . ctrl_supply import CtrlSupply
 from . ctrl_end import CtrlEnd
 
 
@@ -29,9 +30,10 @@ class CtrlWindow:
         self._start = CtrlStart(size, bg_color)
         self._players = CtrlPlayers(size, bg_color)
         self._attack = CtrlAttack(size, bg_color)
-        self._supply = _CtrlDummy(size, bg_color)
+        self._supply = CtrlSupply(size, bg_color)
         self._end = CtrlEnd(size, bg_color)
         self._match = None
+        self._supplies = []
 
         self._view = self._start
         self._dirty = True
@@ -115,13 +117,23 @@ class CtrlWindow:
         self._dirty = True
 
     def start_supply(self):
+        assert not self._supplies
         self._view = self._supply
-        self._supply.show('start supply')
+        ls = self._match.last_supply
+        for i, area_idx in enumerate(ls.areas):
+            num_dice = self._match.area_num_dice[area_idx] - ls.dice[i] + 1
+            self._supplies.extend((area_idx, num_dice + j) for j in range(ls.dice[i]))
+        self._supplies.reverse()
+        self._supply.init(ls.player, ls.sum_dice + ls.num_stock)
         self._dirty = True
 
-    def show_supply(self):
-        self._supply.show('show supply')
-        self._dirty = True
+    def next_supply(self):
+        if self._supplies:
+            area_dice = self._supplies.pop()
+            self._supply.hide(self._match.last_supply.num_stock + len(self._supplies))
+            self._dirty = True
+            return area_dice
+        return None
 
     def end_supply(self):
         self._view = self._players
@@ -133,23 +145,3 @@ class CtrlWindow:
         self._view = self._end
         self._end.show(self._match.winner)
         self._dirty = True
-
-
-import pygame
-from . widgets import Text
-class _CtrlDummy:
-    def __init__(self, size, bg_color):
-        self._bg_color = bg_color
-        self._surface = pygame.Surface(size)
-
-    @property
-    def surface(self):
-        return self._surface
-
-    @property
-    def buttons(self):
-        return ()
-
-    def show(self, msg):
-        self._surface.fill(self._bg_color)
-        Text(f'TODO: {msg}', Text.SIZE_L, self._surface.get_rect()).draw(self._surface)
