@@ -93,9 +93,9 @@ class Engine:
         else:
             print('unhandled user event:', event)
 
-    def render(self):
-        dirty = self._map_window.blit(self._surface, self._map_rect)
-        dirty |= self._ctrl_window.blit(self._surface, self._ctrl_rect)
+    def render(self, force):
+        dirty = self._map_window.blit(self._surface, self._map_rect, force)
+        dirty |= self._ctrl_window.blit(self._surface, self._ctrl_rect, force)
         return dirty
 
     def _init_grid(self):
