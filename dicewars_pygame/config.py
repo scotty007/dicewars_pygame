@@ -19,6 +19,8 @@
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
 from pathlib import Path
+from argparse import ArgumentParser
+
 from pygame import Color
 from dicewars.game import Game
 
@@ -33,8 +35,24 @@ PLAYER_COLORS = [
 MAX_NUM_PLAYERS = len(PLAYER_COLORS)
 DEFAULT_NUM_PLAYERS = Game.DEFAULT_NUM_SEATS
 
-STEP_INTERVAL = 500  # [ms]
-SUPPLY_INTERVAL = STEP_INTERVAL // 10  # [ms]
+DEFAULT_STEP_INTERVAL_BASE = 5
+STEP_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 100  # [ms]
+SUPPLY_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 10  # [ms]
 
 RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
 FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'
+
+
+def parse_cli_args():
+    parser = ArgumentParser()
+    parser.add_argument(
+        '-i', '--interval', type=int,
+        help=f'attack/supply step interval (min=1, default={DEFAULT_STEP_INTERVAL_BASE})'
+    )
+    args = parser.parse_args()
+
+    if args.interval is not None:
+        global STEP_INTERVAL, SUPPLY_INTERVAL
+        interval_base = max(1, args.interval)
+        STEP_INTERVAL = interval_base * 100
+        SUPPLY_INTERVAL = interval_base * 10

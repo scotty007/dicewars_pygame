@@ -64,4 +64,7 @@ def main():
 
 
 if __name__ == '__main__':
+    from . config import parse_cli_args
+
+    parse_cli_args()
     main()

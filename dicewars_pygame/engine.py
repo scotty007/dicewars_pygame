@@ -158,11 +158,11 @@ class Engine:
     def _next_ai_action(self):
         def show_from_area():
             self._map_window.highlight_area(self._match.from_area, self._match.player)
-            self._start_timer(show_to_area)
+            self._start_timer(show_to_area, config.STEP_INTERVAL)
 
         def show_to_area():
             self._map_window.highlight_area(self._match.to_area, self._match.area_players[self._match.to_area])
-            self._start_timer(self._attack)
+            self._start_timer(self._attack, config.STEP_INTERVAL)
 
         attack_areas = self._ai_player.get_attack_areas(self._grid, self._match.state)
         if attack_areas:
@@ -175,11 +175,11 @@ class Engine:
     def _attack(self):
         def show_from():
             self._ctrl_window.show_from_attack()
-            self._start_timer(show_to)
+            self._start_timer(show_to, config.STEP_INTERVAL)
 
         def show_to():
             self._ctrl_window.show_to_attack()
-            self._start_timer(end_attack)
+            self._start_timer(end_attack, config.STEP_INTERVAL)
 
         def end_attack():
             la = self._match.last_attack
@@ -198,11 +198,11 @@ class Engine:
             if self._match.player == 0:  # user player
                 self._timer_running = False
             else:  # AI player
-                self._start_timer(self._next_ai_action)
+                self._start_timer(self._next_ai_action, config.STEP_INTERVAL)
 
         assert self._match.attack()
         self._ctrl_window.start_attack()
-        self._start_timer(show_from)
+        self._start_timer(show_from, config.STEP_INTERVAL)
 
     def _supply(self):
         def next_supply():
@@ -216,8 +216,8 @@ class Engine:
 
         assert self._match.end_turn()
         self._ctrl_window.start_supply()
-        self._start_timer(next_supply)
+        self._start_timer(next_supply, config.STEP_INTERVAL)
 
-    def _start_timer(self, callback, timeout=config.STEP_INTERVAL):
+    def _start_timer(self, callback, timeout):
         pygame.time.set_timer(pygame.event.Event(events.TIMER_NEXT_STEP, next_step=callback), timeout, loops=1)
         self._timer_running = True
