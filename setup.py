@@ -37,7 +37,7 @@ PACKAGE_DATA = {
 }
 INSTALL_REQUIRES = [
     'pygame>=2.0.0',
-    'dicewars',
+    'dicewars==0.1.0',
 ]
 ENTRY_POINTS = {
     'console_scripts': [f'{NAME}={NAME}.main:run']
