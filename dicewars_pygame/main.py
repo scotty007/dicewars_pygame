@@ -23,7 +23,7 @@ import pygame
 from dicewars.__version__ import __version__ as dicewars_version
 
 from . __version__ import __version__
-from . config import APP_SIZE
+from . config import APP_SIZE, parse_cli_args
 from . engine import Engine
 
 
@@ -63,8 +63,10 @@ def main():
     pygame.quit()
 
 
-if __name__ == '__main__':
-    from . config import parse_cli_args
-
+def run():
     parse_cli_args()
     main()
+
+
+if __name__ == '__main__':
+    run()
