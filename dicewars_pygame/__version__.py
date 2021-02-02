@@ -18,5 +18,5 @@
 # You should have received a copy of the GNU General Public License
 # along with dicewars_pygame.  If not, see <http://www.gnu.org/licenses/>.
 
-VERSION = (0, 1, 0, 'dev12')
+VERSION = (0, 1, 0)
 __version__ = '.'.join(str(v) for v in VERSION)
