@@ -32,7 +32,6 @@ class CtrlWindow:
         self._attack = CtrlAttack(size, bg_color)
         self._supply = CtrlSupply(size, bg_color)
         self._end = CtrlEnd(size, bg_color)
-        self._match = None
         self._supplies = []
 
         self._view = self._start
@@ -80,68 +79,60 @@ class CtrlWindow:
         if self._view is not self._start:
             self._view = self._start
             self._dirty = True
-        self._match = None
 
     def init_match(self, match):
-        self._match = match
         self._view = self._players
-        self._players.init_match(self._match)
+        self._players.init_match(match)
         self._dirty = True
 
-    def start_turn(self):
-        self._players.set_current(self._match.player)
+    def start_turn(self, player_idx, is_replay=False):
+        self._players.set_current(player_idx, is_replay)
         self._dirty = True
 
-    def start_attack(self):
+    def start_attack(self, attack):
         self._view = self._attack
-        self._attack.init(self._match.last_attack.from_player, self._match.last_attack.to_player)
+        self._attack.init(attack.from_player, attack.to_player)
         self._dirty = True
 
-    def show_from_attack(self):
-        self._attack.show_from(self._match.last_attack.from_dice, self._match.last_attack.from_sum_dice)
+    def show_from_attack(self, attack):
+        self._attack.show_from(attack.from_dice, attack.from_sum_dice)
         self._dirty = True
 
-    def show_to_attack(self):
-        self._attack.show_to(
-            self._match.last_attack.to_dice, self._match.last_attack.to_sum_dice, self._match.last_attack.victory
-        )
+    def show_to_attack(self, attack):
+        self._attack.show_to(attack.to_dice, attack.to_sum_dice, attack.victory)
         self._dirty = True
 
-    def end_attack(self):
+    def end_attack(self, attack):
         self._view = self._players
-        if self._match.last_attack.victory:
-            from_player_idx = self._match.last_attack.from_player
-            self._players.update(from_player_idx, max_size=self._match.player_max_size[from_player_idx])
-            to_player_idx = self._match.last_attack.to_player
-            self._players.update(to_player_idx, max_size=self._match.player_max_size[to_player_idx])
+        if attack.victory:
+            self._players.update(attack.from_player, max_size=attack.from_player_max_size)
+            self._players.update(attack.to_player, max_size=attack.to_player_max_size)
         self._dirty = True
 
-    def start_supply(self):
+    def start_supply(self, supply):
         assert not self._supplies
         self._view = self._supply
-        ls = self._match.last_supply
-        for i, area_idx in enumerate(ls.areas):
-            num_dice = self._match.area_num_dice[area_idx] - ls.dice[i] + 1
-            self._supplies.extend((area_idx, num_dice + j) for j in range(ls.dice[i]))
+        for i, area_idx in enumerate(supply.areas):
+            num_dice = supply.area_num_dice[i] - supply.dice[i] + 1
+            self._supplies.extend((area_idx, num_dice + j) for j in range(supply.dice[i]))
         self._supplies.reverse()
-        self._supply.init(ls.player, ls.sum_dice + ls.num_stock)
+        self._supply.init(supply.player, supply.sum_dice + supply.player_num_stock)
         self._dirty = True
 
-    def next_supply(self):
+    def next_supply(self, supply):
         if self._supplies:
             area_dice = self._supplies.pop()
-            self._supply.hide(self._match.last_supply.num_stock + len(self._supplies))
+            self._supply.hide(supply.player_num_stock + len(self._supplies))
             self._dirty = True
             return area_dice
         return None
 
-    def end_supply(self):
+    def end_supply(self, supply):
         self._view = self._players
-        player_idx = self._match.last_supply.player
-        self._players.update(player_idx, num_stock=self._match.player_num_stock[player_idx])
+        self._players.update(supply.player, num_stock=supply.player_num_stock)
         self._dirty = True
 
-    def show_end(self):
+    def show_end(self, winner_idx):
         self._view = self._end
-        self._end.show(self._match.winner)
+        self._end.show(winner_idx)
         self._dirty = True

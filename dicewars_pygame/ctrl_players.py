@@ -57,15 +57,13 @@ class CtrlPlayers(CtrlView):
         btn.set_on(self._player_idx == 0)
         btn.draw(self._surface)
 
-    def set_current(self, player_idx):
-        if self._player_idx == player_idx:
-            return
+    def set_current(self, player_idx, is_replay):
         assert 0 <= self._player_idx
         assert 0 <= player_idx
         self._player_states[self._player_idx].set_current(self._surface, False)
         self._player_states[player_idx].set_current(self._surface, True)
         if self._player_idx == 0 or player_idx == 0:
-            self._buttons[0].set_on(player_idx == 0)
+            self._buttons[0].set_on(player_idx == 0 and not is_replay)
             self._buttons[0].draw(self._surface)
         self._player_idx = player_idx
 

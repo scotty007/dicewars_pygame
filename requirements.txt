@@ -1,2 +1,2 @@
 pygame>=2.0.0
-dicewars==0.1.0
+dicewars==0.2.0

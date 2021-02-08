@@ -37,7 +37,7 @@ class CtrlEnd(CtrlView):
         self._buttons.append(btn)
         btn.draw(self._surface)
         rect.y = h - rect.height
-        btn = EnableButton('REPLAY', rect, pygame.event.Event(events.BUTTON_REPLAY), on=False)
+        btn = Button('REPLAY', rect, pygame.event.Event(events.BUTTON_REPLAY))
         self._buttons.append(btn)
         btn.draw(self._surface)
 

@@ -22,7 +22,7 @@ import pygame
 
 from dicewars.grid import Grid
 from dicewars.game import Game
-from dicewars.match import Match
+from dicewars.match import Match, Attack
 from dicewars.player import DefaultPlayer
 from dicewars.util import pick_grid_area
 
@@ -88,6 +88,8 @@ class Engine:
             self._continue_match()
         elif event.type == events.BUTTON_RESTART:
             self._restart_match()
+        elif event.type == events.BUTTON_REPLAY:
+            self._replay_match()
         elif event.type == events.TIMER_NEXT_STEP:
             event.next_step()
         else:
@@ -118,7 +120,7 @@ class Engine:
 
     def _continue_match(self):
         assert self._match and self._match.winner < 0
-        self._ctrl_window.end_attack()
+        self._ctrl_window.end_attack(self._match.last_attack)
         self._next_ai_action()
 
     def _restart_match(self):
@@ -128,7 +130,7 @@ class Engine:
 
     def _start_turn(self):
         assert self._match
-        self._ctrl_window.start_turn()
+        self._ctrl_window.start_turn(self._match.player)
         if 0 < self._match.player:  # AI player
             self._next_ai_action()
         else:  # user player
@@ -168,55 +170,130 @@ class Engine:
         if attack_areas:
             assert self._match.set_from_area(attack_areas[0])
             assert self._match.set_to_area(attack_areas[1])
-            show_from_area()
+            self._start_timer(show_from_area, config.STEP_INTERVAL)
         else:
-            self._supply()
+            self._start_timer(self._supply, config.STEP_INTERVAL)
 
     def _attack(self):
         def show_from():
-            self._ctrl_window.show_from_attack()
+            self._ctrl_window.show_from_attack(self._match.last_attack)
             self._start_timer(show_to, config.STEP_INTERVAL)
 
         def show_to():
-            self._ctrl_window.show_to_attack()
+            self._ctrl_window.show_to_attack(self._match.last_attack)
             self._start_timer(end_attack, config.STEP_INTERVAL)
 
         def end_attack():
             la = self._match.last_attack
-            self._map_window.draw_area(la.from_area, la.from_player, num_dice=self._match.area_num_dice[la.from_area])
+            self._map_window.draw_area(la.from_area, la.from_player, num_dice=la.from_area_num_dice)
             if la.victory:
-                self._map_window.draw_area(la.to_area, la.from_player, num_dice=self._match.area_num_dice[la.to_area])
+                self._map_window.draw_area(la.to_area, la.from_player, num_dice=la.to_area_num_dice)
             else:
                 self._map_window.draw_area(la.to_area, la.to_player)
 
-            if 0 <= self._match.winner or (la.to_player == 0 and self._match.player_num_areas[0] == 0):
+            if 0 <= self._match.winner or (la.to_player == 0 and la.to_player_num_areas == 0):
                 # match finished or user player just eliminated
-                self._ctrl_window.show_end()
+                self._ctrl_window.show_end(self._match.winner)
                 return
-            self._ctrl_window.end_attack()
+            self._ctrl_window.end_attack(la)
 
             if self._match.player == 0:  # user player
                 self._timer_running = False
             else:  # AI player
-                self._start_timer(self._next_ai_action, config.STEP_INTERVAL)
+                self._next_ai_action()
 
         assert self._match.attack()
-        self._ctrl_window.start_attack()
+        self._ctrl_window.start_attack(self._match.last_attack)
         self._start_timer(show_from, config.STEP_INTERVAL)
 
     def _supply(self):
         def next_supply():
-            area_dice = self._ctrl_window.next_supply()
+            area_dice = self._ctrl_window.next_supply(self._match.last_supply)
             if area_dice:
                 self._map_window.draw_area(area_dice[0], self._match.last_supply.player, area_dice[1])
                 self._start_timer(next_supply, config.SUPPLY_INTERVAL)
             else:
-                self._ctrl_window.end_supply()
+                self._ctrl_window.end_supply(self._match.last_supply)
                 self._start_turn()
 
         assert self._match.end_turn()
-        self._ctrl_window.start_supply()
+        self._ctrl_window.start_supply(self._match.last_supply)
         self._start_timer(next_supply, config.STEP_INTERVAL)
+
+    def _replay_match(self):
+        def next_step():
+            nonlocal step_idx, player_idx, step_action
+            step_idx += 1
+            assert step_idx < self._match.num_steps
+            step_action = self._match.history[step_idx]
+            if isinstance(step_action, Attack):
+                if player_idx != step_action.from_player:
+                    player_idx = step_action.from_player
+                    self._ctrl_window.start_turn(player_idx, is_replay=True)
+                self._start_timer(show_from_area, config.STEP_INTERVAL)
+            else:  # Supply
+                if player_idx != step_action.player:
+                    player_idx = step_action.player
+                    self._ctrl_window.start_turn(player_idx, is_replay=True)
+                self._start_timer(start_supply, config.STEP_INTERVAL)
+
+        def show_from_area():
+            self._map_window.highlight_area(step_action.from_area, step_action.from_player)
+            self._start_timer(show_to_area, config.STEP_INTERVAL)
+
+        def show_to_area():
+            self._map_window.highlight_area(step_action.to_area, step_action.to_player)
+            self._start_timer(start_attack, config.STEP_INTERVAL)
+
+        def start_attack():
+            self._ctrl_window.start_attack(step_action)
+            self._start_timer(show_from_attack, config.STEP_INTERVAL)
+
+        def show_from_attack():
+            self._ctrl_window.show_from_attack(step_action)
+            self._start_timer(show_to_attack, config.STEP_INTERVAL)
+
+        def show_to_attack():
+            self._ctrl_window.show_to_attack(step_action)
+            self._start_timer(end_attack, config.STEP_INTERVAL)
+
+        def end_attack():
+            self._map_window.draw_area(
+                step_action.from_area, step_action.from_player, num_dice=step_action.from_area_num_dice
+            )
+            if step_action.victory:
+                self._map_window.draw_area(
+                    step_action.to_area, step_action.from_player, num_dice=step_action.to_area_num_dice
+                )
+            else:
+                self._map_window.draw_area(step_action.to_area, step_action.to_player)
+
+            if step_idx < self._match.num_steps - 1:  # more actions available
+                self._ctrl_window.end_attack(step_action)
+                next_step()
+            else:
+                self._ctrl_window.show_end(self._match.winner)
+
+        def start_supply():
+            self._ctrl_window.start_supply(step_action)
+            self._start_timer(next_supply, config.STEP_INTERVAL)
+
+        def next_supply():
+            area_dice = self._ctrl_window.next_supply(step_action)
+            if area_dice:
+                self._map_window.draw_area(area_dice[0], step_action.player, area_dice[1])
+                self._start_timer(next_supply, config.SUPPLY_INTERVAL)
+            else:
+                self._ctrl_window.end_supply(step_action)
+                next_step()  # NOTE: replay never starts after supply
+
+        assert self._match and self._match.num_steps
+        step_idx = -1
+        player_idx = -1
+        step_action = None
+        self._map_window.init_game(self._game)
+        self._ctrl_window.init_match(Match(self._game))
+        next_step()
 
     def _start_timer(self, callback, timeout):
         pygame.time.set_timer(pygame.event.Event(events.TIMER_NEXT_STEP, next_step=callback), timeout, loops=1)
