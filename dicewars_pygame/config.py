@@ -39,6 +39,9 @@ DEFAULT_STEP_INTERVAL_BASE = 5
 STEP_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 100  # [ms]
 SUPPLY_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 10  # [ms]
 
+SOUND_CONFIG = {'frequency': 44100, 'size': -16, 'channels': 1}
+SOUND_VOLUME = 1.0
+
 RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
 FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'
 

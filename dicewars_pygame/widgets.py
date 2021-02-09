@@ -21,10 +21,11 @@
 import pygame
 
 from . config import FONT_FILE_PATH
+from . import sounds
 
 
 if not pygame.font:
-    raise RuntimeError('pygame.font support not available')
+    raise SystemError('pygame.font support not available')
 
 
 class Text:
@@ -117,6 +118,7 @@ class Button:
         if self._box.rect.collidepoint(x, y) and self._down:
             self._down = False
             pygame.event.post(self._event)  # clicked
+            sounds.button()
             return True
         assert not self._down
         return False

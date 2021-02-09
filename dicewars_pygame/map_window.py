@@ -22,6 +22,7 @@ import pygame
 
 from . config import PLAYER_COLORS
 from . map_area import MapArea
+from . import sounds
 
 
 class MapWindow:
@@ -68,6 +69,7 @@ class MapWindow:
 
     def highlight_area(self, area_idx, player_idx):
         self._map_areas[area_idx].draw(self._surface, self._HL_BG_COLOR, bd_color=PLAYER_COLORS[player_idx])
+        sounds.area()
         self._dirty = True
 
     def get_map_pos(self, x, y):

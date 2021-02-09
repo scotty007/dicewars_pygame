@@ -23,6 +23,7 @@ from . ctrl_players import CtrlPlayers
 from . ctrl_attack import CtrlAttack
 from . ctrl_supply import CtrlSupply
 from . ctrl_end import CtrlEnd
+from . import sounds
 
 
 class CtrlWindow:
@@ -100,6 +101,10 @@ class CtrlWindow:
 
     def show_to_attack(self, attack):
         self._attack.show_to(attack.to_dice, attack.to_sum_dice, attack.victory)
+        if attack.victory:
+            sounds.victory()
+        else:
+            sounds.defeat()
         self._dirty = True
 
     def end_attack(self, attack):
@@ -123,6 +128,7 @@ class CtrlWindow:
         if self._supplies:
             area_dice = self._supplies.pop()
             self._supply.hide(supply.player_num_stock + len(self._supplies))
+            sounds.supply()
             self._dirty = True
             return area_dice
         return None
@@ -135,4 +141,8 @@ class CtrlWindow:
     def show_end(self, winner_idx):
         self._view = self._end
         self._end.show(winner_idx)
+        if winner_idx == 0:
+            sounds.won()
+        else:
+            sounds.lost()
         self._dirty = True

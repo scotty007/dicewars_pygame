@@ -25,11 +25,13 @@ from dicewars.__version__ import __version__ as dicewars_version
 from . __version__ import __version__
 from . config import APP_SIZE, parse_cli_args
 from . engine import Engine
+from . import sounds
 
 
 def main():
     print(f'dicewars_pygame {__version__} (dicewars {dicewars_version})')
     pygame.init()
+    sounds.init()
     pygame.display.set_caption(f'DiceWars (pygame) v{__version__}')
 
     screen = pygame.display.set_mode(APP_SIZE)

@@ -44,7 +44,15 @@ top-level source directory:
 Attack/supply step intervals during matches can be adjusted via the
 ``-i``/``--interval`` command line argument.
 
-## License ##
+## Licenses ##
 
 **dicewars_pygame** is distributed under the terms of the
 [GPLv3+](https://www.gnu.org/licenses/gpl-3.0).
+
+All sound files are created using
+[sfxr-sdl2](https://github.com/tjohnman/sfxr-sdl2)
+and licensed under the
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+
+The Anton font is licensed by The Anton Project Authors under the
+[OFL v1.1](http://scripts.sil.org/OFL).

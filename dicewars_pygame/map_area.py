@@ -29,7 +29,6 @@ class MapArea:
 
     def __init__(self, grid_area, grid_center_cell, map_x0, map_y0, map_scale):
         self._points = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_area.border]
-        # TODO: dice gfx
         bbox = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_center_cell.bbox]
         self._dice_rect = pygame.Rect(*bbox[0], bbox[1][0] - bbox[0][0], bbox[1][1] - bbox[0][1])
         self._num_dice = None

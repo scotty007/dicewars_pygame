@@ -33,7 +33,7 @@ CLASSIFIERS = [
 
 PACKAGES = find_packages()
 PACKAGE_DATA = {
-    NAME: ['resources/Anton-Regular.*']
+    NAME: ['resources/Anton-Regular.*', 'resources/*.wav']
 }
 INSTALL_REQUIRES = [
     'pygame>=2.0.0',
