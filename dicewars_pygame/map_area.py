@@ -25,6 +25,7 @@ from . widgets import Text
 
 class MapArea:
     _BD_COLOR = pygame.Color('black')
+    _TEXT_BASE_SIZE = 10
 
     def __init__(self, grid_area, grid_center_cell, map_x0, map_y0, map_scale):
         self._points = [(map_x0 + x * map_scale, map_y0 + y * map_scale) for x, y in grid_area.border]
@@ -39,4 +40,6 @@ class MapArea:
         if num_dice is not None:
             self._num_dice = num_dice
         assert self._num_dice is not None
-        Text(str(self._num_dice), Text.SIZE_S, self._dice_rect, color=bd_color).draw(surface)
+        Text(
+            str(self._num_dice), self._TEXT_BASE_SIZE + self._num_dice * 2, self._dice_rect, color=bd_color
+        ).draw(surface)
