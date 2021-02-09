@@ -46,10 +46,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.WINDOWRESTORED:
-                force_redraw = True
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
+            elif event.type == pygame.WINDOWRESTORED:
+                force_redraw = True
             elif event.type == pygame.MOUSEMOTION:
                 engine.mouse_move(*event.pos)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -59,7 +59,7 @@ def main():
             elif pygame.USEREVENT <= event.type:
                 engine.user_event(event)
 
-        if engine.render(force_redraw):
+        if engine.render() or force_redraw:
             pygame.display.flip()
 
     pygame.quit()

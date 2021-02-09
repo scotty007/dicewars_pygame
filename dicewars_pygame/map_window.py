@@ -38,8 +38,8 @@ class MapWindow:
 
         self._dirty = False
 
-    def blit(self, surface, rect, force):
-        if self._dirty or force:
+    def blit(self, surface, rect):
+        if self._dirty:
             surface.blit(self._surface, rect)
             self._dirty = False
             return True
