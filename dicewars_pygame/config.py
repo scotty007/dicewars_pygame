@@ -39,8 +39,9 @@ DEFAULT_STEP_INTERVAL_BASE = 5
 STEP_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 100  # [ms]
 SUPPLY_INTERVAL = DEFAULT_STEP_INTERVAL_BASE * 10  # [ms]
 
+DEFAULT_SOUND_VOLUME = 1.0
+SOUND_VOLUME = DEFAULT_SOUND_VOLUME
 SOUND_CONFIG = {'frequency': 44100, 'size': -16, 'channels': 1}
-SOUND_VOLUME = 1.0
 
 RESOURCES_PATH = Path(__file__).absolute().parent / 'resources'
 FONT_FILE_PATH = RESOURCES_PATH / 'Anton-Regular.ttf'
@@ -52,6 +53,10 @@ def parse_cli_args():
         '-i', '--interval', type=int,
         help=f'attack/supply step interval (min=1, default={DEFAULT_STEP_INTERVAL_BASE})'
     )
+    parser.add_argument(
+        '-v', '--volume', type=float,
+        help=f'sound effects volume (range=[0.0..1.0], default={DEFAULT_SOUND_VOLUME})'
+    )
     args = parser.parse_args()
 
     if args.interval is not None:
@@ -59,3 +64,7 @@ def parse_cli_args():
         interval_base = max(1, args.interval)
         STEP_INTERVAL = interval_base * 100
         SUPPLY_INTERVAL = interval_base * 10
+
+    if args.volume is not None:
+        global SOUND_VOLUME
+        SOUND_VOLUME = (max(0.0, min(1.0, args.volume)))

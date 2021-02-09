@@ -42,7 +42,8 @@ top-level source directory:
 ### Options ###
 
 Attack/supply step intervals during matches can be adjusted via the
-``-i``/``--interval`` command line argument.
+``-i``/``--interval`` command line argument. The sound effects volume
+can be reduced via ``-v``/``--volume``.
 
 ## Licenses ##
 
