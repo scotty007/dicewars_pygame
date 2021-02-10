@@ -33,19 +33,17 @@ from . ctrl_window import CtrlWindow
 
 
 class Engine:
-    _BG_COLOR = pygame.Color('white')
 
     def __init__(self, surface):
         self._surface = surface
-        self._surface.fill(self._BG_COLOR)
 
         pad = 10
         w_surf, h_surf = self._surface.get_size()
         w_win, h_ctrl = w_surf - pad * 2, 100
         self._map_rect = pygame.Rect(pad, pad, w_win, h_surf - h_ctrl - pad * 3)
-        self._map_window = MapWindow(self._map_rect.size, self._BG_COLOR)
+        self._map_window = MapWindow(self._map_rect.size, config.APP_BG_COLOR)
         self._ctrl_rect = pygame.Rect(pad, self._map_rect.bottom + pad, w_win, h_ctrl)
-        self._ctrl_window = CtrlWindow(self._ctrl_rect.size, self._BG_COLOR)
+        self._ctrl_window = CtrlWindow(self._ctrl_rect.size, config.APP_BG_COLOR)
 
         self._grid = None
         self._game = None

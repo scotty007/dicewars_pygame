@@ -23,7 +23,8 @@ import pygame
 from dicewars.__version__ import __version__ as dicewars_version
 
 from . __version__ import __version__
-from . config import APP_SIZE, parse_cli_args
+from . config import APP_SIZE, APP_BG_COLOR, parse_cli_args
+from . welcome import Welcome
 from . engine import Engine
 from . import sounds
 
@@ -38,6 +39,10 @@ def main():
     clock = pygame.time.Clock()
     engine = Engine(screen)
 
+    screen.fill(APP_BG_COLOR)
+    welcome = Welcome(screen)
+    pygame.display.flip()
+
     running = True
     while running:
         clock.tick(60)
@@ -50,6 +55,11 @@ def main():
                 running = False
             elif event.type == pygame.WINDOWRESTORED:
                 force_redraw = True
+            elif welcome:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    welcome = None
+                    screen.fill(APP_BG_COLOR)
+                    force_redraw = True
             elif event.type == pygame.MOUSEMOTION:
                 engine.mouse_move(*event.pos)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -59,7 +69,7 @@ def main():
             elif pygame.USEREVENT <= event.type:
                 engine.user_event(event)
 
-        if engine.render() or force_redraw:
+        if (not welcome and engine.render()) or force_redraw:
             pygame.display.flip()
 
     pygame.quit()
